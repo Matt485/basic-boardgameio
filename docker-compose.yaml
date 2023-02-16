@@ -1,0 +1,34 @@
+version: "3"
+services:
+  backend:
+    image: node:lts
+    working_dir: /code
+    environment:
+      - NODE_ENV=development
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend/package.json:/code/package.json
+      - ./backend/server.mjs:/code/server.mjs
+    command:
+      ['sh', '-cx', "npm install && npm run start"]
+    networks:
+      public:
+  frontend:
+    image: node:lts
+    working_dir: /code
+    ports:
+      - "8127:8127"
+    volumes:
+      - ./frontend/src:/code/src
+      - ./frontend/vite.config.ts:/code/vite.config.ts
+      - ./frontend/index.html:/code/index.html
+      - ./frontend/package.json:/code/package.json
+    depends_on: 
+      - backend
+    command: ['sh', '-cx', "npm install && npm run build && npm run dev"]
+    networks:
+      public:
+
+networks:
+  public:
